@@ -293,7 +293,7 @@ class RNParallax extends Component {
             </Text>
           )
         }
-        {typeof title !== 'string' && title}
+        {typeof title !== 'string' && title()}
       </Animated.View>
     );
   }
@@ -319,20 +319,29 @@ class RNParallax extends Component {
 
   renderScrollView() {
     const {
-      renderContent, scrollEventThrottle, scrollViewStyle, contentContainerStyle, innerContainerStyle, scrollViewProps,
+      renderContent, renderContentHeader, scrollEventThrottle, scrollViewStyle, contentContainerStyle, innerContainerStyle, scrollViewProps,
     } = this.props;
     const { scrollY } = this.state;
     return (
       <Animated.ScrollView
-        style={[styles.scrollView, scrollViewStyle]}
+        style={[{ paddingTop: this.getHeaderMaxHeight() }, styles.scrollView, scrollViewStyle]}
         contentContainerStyle={contentContainerStyle}
         scrollEventThrottle={scrollEventThrottle}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
         )}
+
         {...scrollViewProps}
       >
-        <View style={[{ marginTop: this.getHeaderMaxHeight() }, innerContainerStyle]}>
+        {/* <Animated.View
+          style={{
+            position: 'absolute',
+            top: this.getHeaderHeight(),
+            left: 0
+          }}>
+          {renderContentHeader && renderContentHeader()}
+        </Animated.View> */}
+        <View style={[innerContainerStyle]}>
           {renderContent()}
         </View>
       </Animated.ScrollView>
@@ -349,15 +358,15 @@ class RNParallax extends Component {
         {this.renderScrollView()}
         {this.renderNavbarBackground()}
         {this.renderHeaderBackground()}
-        {this.renderHeaderTitle()}
         {this.renderHeaderForeground()}
+        {this.renderHeaderTitle()}
       </View>
     );
   }
 }
 
 RNParallax.propTypes = {
-  renderNavBar: PropTypes.func,
+  renderContentHeader: PropTypes.func,
   renderContent: PropTypes.func.isRequired,
   backgroundColor: PropTypes.string,
   backgroundImage: PropTypes.any,
